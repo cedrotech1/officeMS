@@ -1,0 +1,31 @@
+campus name,building code,building name,room code,maximum number of occupants
+huye,BLD1,Science Block,101,4
+huye,BLD1,Science Block,102,4
+huye,BLD1,Science Block,103,4
+huye,BLD1,Science Block,104,4
+huye,BLD2,Admin Block,201,3
+huye,BLD2,Admin Block,202,3
+huye,BLD2,Admin Block,203,3
+huye,BLD2,Admin Block,204,3
+huye,BLD3,Library,301,6
+huye,BLD3,Library,302,6
+huye,BLD3,Library,303,6
+huye,BLD3,Library,304,6
+huye,BLD4,IT Block,401,5
+huye,BLD4,IT Block,402,5
+huye,BLD4,IT Block,403,5
+huye,BLD4,IT Block,404,5
+huye,BLD5,Engineering,501,4
+huye,BLD5,Engineering,502,4
+huye,BLD5,Engineering,503,4
+huye,BLD5,Engineering,504,4
+huye,BLD6,Medical Block,601,3
+huye,BLD6,Medical Block,602,3
+huye,BLD6,Medical Block,603,3
+huye,BLD6,Medical Block,604,3
+huye,BLD7,Law Block,701,2
+huye,BLD7,Law Block,702,2
+huye,BLD7,Law Block,703,2
+huye,BLD7,Law Block,704,2
+huye,BLD8,Education Block,801,4
+huye,BLD8,Education Block,802,4 
