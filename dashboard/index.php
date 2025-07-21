@@ -6,6 +6,8 @@ error_reporting(E_ALL);
 
 // Include the database connection
 include('../connection.php');
+session_start();
+$mycampus = $_SESSION['campus'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -91,16 +93,16 @@ include('../connection.php');
 
     <?php
     // Dashboard statistics
-    $total_users = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM users"))['cnt'];
-    $total_offices = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM offices"))['cnt'];
-    $total_allocations = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation"))['cnt'];
-    $total_unallocated = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM users WHERE id NOT IN (SELECT user_id FROM allocation)"))['cnt'];
-    $total_available_offices = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM offices WHERE id NOT IN (SELECT office_id FROM allocation)"))['cnt'];
-    $total_pending_alloc = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation WHERE status = 'pending'"))['cnt'];
-    $total_approved_alloc = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation WHERE status = 'approved'"))['cnt'];
+    $total_users = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM users WHERE campus = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
+    $total_offices = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM offices WHERE campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
+    $total_allocations = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation JOIN offices ON allocation.office_id = offices.id WHERE offices.campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
+    $total_unallocated = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM users WHERE campus = '".mysqli_real_escape_string($connection, $mycampus)."' AND id NOT IN (SELECT user_id FROM allocation JOIN offices ON allocation.office_id = offices.id WHERE offices.campus_name = '".mysqli_real_escape_string($connection, $mycampus)."')"))['cnt'];
+    $total_available_offices = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM offices WHERE campus_name = '".mysqli_real_escape_string($connection, $mycampus)."' AND id NOT IN (SELECT office_id FROM allocation)") )['cnt'];
+    $total_pending_alloc = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation JOIN offices ON allocation.office_id = offices.id WHERE allocation.status = 'pending' AND offices.campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
+    $total_approved_alloc = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation JOIN offices ON allocation.office_id = offices.id WHERE allocation.status = 'approved' AND offices.campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
     // Office occupancy breakdown
     $occ_stats = ['Full'=>0,'Partially Occupied'=>0,'Available'=>0,'Over-Occupied'=>0];
-    $q = mysqli_query($connection, "SELECT id, max_occupants FROM offices");
+    $q = mysqli_query($connection, "SELECT id, max_occupants FROM offices WHERE campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'");
     while ($o = mysqli_fetch_assoc($q)) {
       $oid = $o['id'];
       $max_occ = intval($o['max_occupants']);
@@ -111,8 +113,8 @@ include('../connection.php');
       elseif ($occ_count > 0) $occ_stats['Partially Occupied']++;
       else $occ_stats['Available']++;
     }
-    $total_spaces = mysqli_fetch_assoc(mysqli_query($connection, "SELECT SUM(max_occupants) as total FROM offices"))['total'];
-    $total_occupied = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation"))['cnt'];
+    $total_spaces = mysqli_fetch_assoc(mysqli_query($connection, "SELECT SUM(max_occupants) as total FROM offices WHERE campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['total'];
+    $total_occupied = mysqli_fetch_assoc(mysqli_query($connection, "SELECT COUNT(*) as cnt FROM allocation JOIN offices ON allocation.office_id = offices.id WHERE offices.campus_name = '".mysqli_real_escape_string($connection, $mycampus)."'"))['cnt'];
     $total_available_spaces = $total_spaces - $total_occupied;
     ?>
     <main id="main" class="main">

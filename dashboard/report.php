@@ -114,7 +114,8 @@ include ("./includes/menu.php");
                   <th>Campus</th>
                   <th>Max Occupants</th>
                   <th>Current Occupants</th>
-                  <th>Members</th>
+                  <th>Name</th>
+                  <th>Email</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,27 +127,38 @@ include ("./includes/menu.php");
                   $members_q = mysqli_query($connection, "SELECT users.names, users.email FROM allocation JOIN users ON allocation.user_id = users.id WHERE allocation.office_id = $office_id");
                   $members = [];
                   while ($m = mysqli_fetch_assoc($members_q)) {
-                    $members[] = htmlspecialchars($m['names']) . ' (' . htmlspecialchars($m['email']) . ')';
+                    $members[] = $m;
                   }
                   $current_occupants = count($members);
-                  echo '<tr>';
-                  echo '<td>' . $i++ . '</td>';
-                  echo '<td>' . htmlspecialchars($o['room_code']) . '</td>';
-                  echo '<td>' . htmlspecialchars($o['building_name']) . '</td>';
-                  echo '<td>' . htmlspecialchars($o['building_code']) . '</td>';
-                  echo '<td>' . htmlspecialchars($o['campus_name']) . '</td>';
-                  echo '<td>' . htmlspecialchars($o['max_occupants']) . '</td>';
-                  echo '<td>' . $current_occupants . '</td>';
-                  echo '<td>';
                   if ($members) {
-                    echo '<ul class="mb-0 ps-3">';
-                    foreach ($members as $mem) echo '<li>' . $mem . '</li>';
-                    echo '</ul>';
+                    foreach ($members as $idx => $mem) {
+                      echo '<tr>';
+                      if ($idx === 0) {
+                        echo '<td rowspan="'.count($members).'">' . $i . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . htmlspecialchars($o['room_code']) . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . htmlspecialchars($o['building_name']) . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . htmlspecialchars($o['building_code']) . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . htmlspecialchars($o['campus_name']) . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . htmlspecialchars($o['max_occupants']) . '</td>';
+                        echo '<td rowspan="'.count($members).'">' . $current_occupants . '</td>';
+                      }
+                      echo '<td>' . htmlspecialchars($mem['names']) . '</td>';
+                      echo '<td>' . htmlspecialchars($mem['email']) . '</td>';
+                      echo '</tr>';
+                    }
+                    $i++;
                   } else {
-                    echo '<span class="text-muted">None</span>';
+                    echo '<tr>';
+                    echo '<td>' . $i++ . '</td>';
+                    echo '<td>' . htmlspecialchars($o['room_code']) . '</td>';
+                    echo '<td>' . htmlspecialchars($o['building_name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($o['building_code']) . '</td>';
+                    echo '<td>' . htmlspecialchars($o['campus_name']) . '</td>';
+                    echo '<td>' . htmlspecialchars($o['max_occupants']) . '</td>';
+                    echo '<td>0</td>';
+                    echo '<td colspan="2"><span class="text-muted">None</span></td>';
+                    echo '</tr>';
                   }
-                  echo '</td>';
-                  echo '</tr>';
                 }
                 ?>
               </tbody>

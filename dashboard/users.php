@@ -216,20 +216,20 @@ $('#addUserForm').on('submit', function(e) {
    <!-- Filters -->
    <!-- The users table should be loaded into a container like: -->
 <div class="row g-3 mb-3" id="filterRow">
-  <div class="col-md-3">
+     <div class="col-md-3">
     <input type="text" id="userSearchInput" class="form-control" placeholder="Search email or phone">
-  </div>
-  <div class="col-md-3">
+     </div>
+     <div class="col-md-3">
     <select id="userCampusInput" class="form-control">
-      <option value="">All Campuses</option>
+         <option value="">All Campuses</option>
       <option value="huye">Huye</option>
       <option value="nyagatare">Nyagatare</option>
       <option value="rukara">Rukara</option>
       <option value="nyarugenge">Nyarugenge</option>
       <option value="busogo">Busogo</option>
       <option value="remera">Remera</option>
-    </select>
-  </div>
+       </select>
+     </div>
 </div>
 <div id="usersTableContainer"></div>
 

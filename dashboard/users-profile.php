@@ -16,6 +16,7 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
                     $email = $row["email"];
                     $about = $row["about"];
                     $role = $row["role"];
+                    $campus = $row["campus"];
                     
                 }
 ?>
@@ -81,7 +82,8 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
 
               <img src="./<?php echo $image;?>" alt="Profile" class="rounded-circle" style="height:3.5cm;width:5cm">
               <h2><?php echo $names;?></h2>
-              <h3><?php echo $role;?></h3>
+              <h3><?php echo ($role == 'officer') ? 'Office Manager' : $role;?></h3>
+              <h3><?php echo ($campus == '') ? '' : $campus." campus";?></h3>
               <div class="social-links mt-2">
                 <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
                 <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
@@ -136,8 +138,10 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
 
                   <div class="row">
                     <div class="col-lg-3 col-md-4 label">title</div>
-                    <div class="col-lg-9 col-md-8"><?php echo $role;?></div>
+                    <div class="col-lg-9 col-md-8"><?php echo ($role == 'officer') ? 'Office Manager' : $role;?></div>
                   </div>
+
+               
 
                  
 
@@ -151,6 +155,8 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
                     <div class="col-lg-3 col-md-4 label">Email</div>
                     <div class="col-lg-9 col-md-8"><?php echo $email;?></div>
                   </div>
+
+                  
 
                 </div>
 
@@ -204,6 +210,7 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
                         <input name="email" type="email" disabled     class="form-control" id="Email" value="<?php echo $email  ?>">
                       </div>
                     </div>
+
 
        
 
