@@ -5,7 +5,7 @@
 $dbHost = 'localhost';
 $dbUser = 'root';
 $dbPassword = '';
-$dbName = 'officems';
+$dbName = 'office';
 $dbPort = 3306; // Default MySQL port
 
 $connection = mysqli_connect($dbHost, $dbUser, $dbPassword, $dbName, $dbPort);

@@ -155,6 +155,7 @@ $ok1 = mysqli_query($connection, "select * from users where id=$id");
                     <div class="col-lg-3 col-md-4 label">Email</div>
                     <div class="col-lg-9 col-md-8"><?php echo $email;?></div>
                   </div>
+                  <a href="profile_manage.php" class="btn btn-primary">Manage Your Profile</a>
 
                   
 

@@ -290,27 +290,30 @@ $bg = true;
         </div>
     </div>
     <div class="container-fluid">
-        <form method="get" class="row filter-bar align-items-center g-2 mb-0">
-            <div class="col-md-3 col-12">
-                <input type="text" name="role" class="form-control" placeholder="Search by Accademic position..." value="<?php echo htmlspecialchars($role_filter); ?>">
+        <div class="row filter-bar align-items-center g-2 mb-0" id="filter-bar">
+            <div class="col-md-3 col-12 mb-2 mb-md-0">
+                <input type="text" id="filter-name" name="name" class="form-control" placeholder="Search by Name..." value="<?php echo htmlspecialchars($alpha_filter); ?>">
             </div>
-            <div class="col-md-3 col-12">
-                <select name="role" class="form-select" onchange="this.form.submit()">
-                    <option value="">-- Filter by Accademic position --</option>
+            <div class="col-md-3 col-12 mb-2 mb-md-0">
+                <select id="filter-role" name="role" class="form-select">
+                    <option value="">-- Filter by Academic Position --</option>
                     <?php foreach ($roles as $role) {
                         $selected = ($role_filter === $role) ? 'selected' : '';
                         echo '<option value="'.htmlspecialchars($role).'" '.$selected.'>'.htmlspecialchars($role).'</option>';
                     } ?>
                 </select>
             </div>
-            <div class="col-md-2 col-12">
-                <button type="submit" class="btn btn-primary w-100">Search</button>
+            <div class="col-md-2 col-12 mb-2 mb-md-0">
+                <button type="button" id="reset-filters" class="btn btn-secondary w-100">Reset</button>
             </div>
             <div class="col-md-4 col-12 text-end">
-                <span style="color:#888;font-size:0.98rem;font-weight:500;">Showing <strong><?php echo $count; ?></strong> results</span>
+                <span style="color:#888;font-size:0.98rem;font-weight:500;">Showing <strong id="result-count"><?php echo $count; ?></strong> results</span>
             </div>
-        </form>
-        <div class="directory-list">
+        </div>
+        <div id="ajax-loading" style="display:none;text-align:center;padding:1rem;">
+            <span class="spinner-border text-primary" role="status"></span> Loading...
+        </div>
+        <div class="directory-list" id="staff-list">
 <?php
 if ($result && $result->num_rows > 0) {
     while ($user = $result->fetch_assoc()) {
@@ -328,7 +331,7 @@ if ($result && $result->num_rows > 0) {
         echo '<div class="row staff-row align-items-center py-3 mx-0" style="background:'.$bgcolor.'; border-bottom:1px solid #e5e7eb;">';
         echo '<div class="col-auto d-flex align-items-center justify-content-center">'.$avatar.'</div>';
         echo '<div class="col-md-4 col-12">';
-        echo '<div class="fw-bold" style="color:#223; font-size:1.15rem;">'.htmlspecialchars($user['names']).'</div>';
+        echo '<div class="fw-bold" style="color:#223; font-size:1.15rem;"><a href="profile_view.php?id=' . $user['id'] . '" style="color:#223; text-decoration:underline;">'.htmlspecialchars($user['names']).'</a></div>';
         echo '<div class="text-muted small">'.htmlspecialchars($user['about']).'</div>';
         echo '</div>';
         echo '<div class="col-md-4 col-12 mt-2 mt-md-0">';
@@ -384,9 +387,53 @@ $letters = range('A', 'Z');
 foreach ($letters as $letter) {
     $q = $_GET; $q['alpha'] = $letter; $q['page'] = 1;
     $active = (strtoupper($alpha_filter) === $letter) ? ' style="font-weight:bold;color:#d7262b;"' : '';
-    echo '<a href="?'.http_build_query($q).'" aria-label="'.$letter.'"'.$active.'>'.$letter.'</a>';
+    echo '<a href="#" class="alpha-link" data-alpha="'.$letter.'"'.$active.'>'.$letter.'</a>';
 }
 ?>
     </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function() {
+    function fetchStaff(page = 1) {
+        var role = $('#filter-role').val();
+        var name = $('#filter-name').val();
+        $('#ajax-loading').show();
+        $.get('staff_ajax.php', { role: role, name: name, page: page }, function(data) {
+            $('#staff-list').html(data.html);
+            $('#result-count').text(data.count);
+            $('#ajax-loading').hide();
+        }, 'json');
+    }
+    $('#filter-role').on('change', function() {
+        fetchStaff(1);
+    });
+    $('#filter-name').on('input', function() {
+        fetchStaff(1);
+    });
+    $(document).on('click', '.pagination .page-link', function(e) {
+        var href = $(this).attr('href');
+        if (href && href !== '#') {
+            e.preventDefault();
+            var url = new URL(href, window.location.origin);
+            var page = url.searchParams.get('page') || 1;
+            fetchStaff(page);
+        }
+    });
+    $(document).on('click', '.alpha-link', function(e) {
+        e.preventDefault();
+        var alpha = $(this).data('alpha');
+        $('#filter-name').val(alpha);
+        fetchStaff(1);
+        $('.alpha-link').css({'font-weight':'','color':''});
+        $(this).css({'font-weight':'bold','color':'#d7262b'});
+    });
+    $('#reset-filters').on('click', function() {
+        $('#filter-role').val('');
+        $('#filter-name').val('');
+        $('.alpha-link').css({'font-weight':'','color':''});
+        fetchStaff(1);
+    });
+});
+</script>
 </body>
 </html>
